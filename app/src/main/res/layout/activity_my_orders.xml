@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F8F8">
+
+    <!-- Header với nền trắng -->
+    <RelativeLayout
+        android:id="@+id/headerSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:layout_alignParentTop="true">
+
+        <!-- Header -->
+        <RelativeLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="16dp">
+
+            <!-- Back Button -->
+            <ImageView
+                android:id="@+id/backButton"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentStart="true"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="@color/dark_navy" />
+
+            <!-- Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="My Orders"
+                android:textColor="@color/dark_navy"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium" />
+
+            <!-- Menu Button -->
+            <ImageView
+                android:id="@+id/menuButton"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_more_vert"
+                app:tint="@color/dark_navy" />
+        </RelativeLayout>
+
+        <!-- Tabs -->
+        <LinearLayout
+            android:id="@+id/tabsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/header"
+            android:orientation="horizontal"
+            android:paddingBottom="0dp">
+
+            <!-- Ongoing Tab -->
+            <LinearLayout
+                android:id="@+id/ongoingTab"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingVertical="12dp">
+
+                <TextView
+                    android:id="@+id/ongoingText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ongoing"
+                    android:textColor="@color/coral"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium" />
+
+                <View
+                    android:id="@+id/ongoingIndicator"
+                    android:layout_width="60dp"
+                    android:layout_height="2.5dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/coral" />
+            </LinearLayout>
+
+            <!-- History Tab -->
+            <LinearLayout
+                android:id="@+id/historyTab"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingVertical="12dp">
+
+                <TextView
+                    android:id="@+id/historyText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="History"
+                    android:textColor="@color/gray_text"
+                    android:textSize="15sp"
+                    android:fontFamily="sans-serif" />
+
+                <View
+                    android:id="@+id/historyIndicator"
+                    android:layout_width="60dp"
+                    android:layout_height="2.5dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@android:color/transparent" />
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <!-- Ongoing Orders List -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/ongoingContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/headerSection"
+        android:scrollbars="none"
+        android:overScrollMode="never"
+        android:fillViewport="true"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp">
+
+            <!-- Order Item 1 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="14dp">
+
+                    <!-- Product Image -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="68dp"
+                        android:layout_height="68dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="#E8EBED">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop" />
+
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- Product Info -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="14dp"
+                        android:orientation="vertical">
+
+                        <!-- Name and Order Number -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="T - shirt"
+                                android:textColor="@color/dark_navy"
+                                android:textSize="15sp"
+                                android:textStyle="bold"
+                                android:fontFamily="sans-serif-medium" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="#162432"
+                                android:textColor="@color/gray_text"
+                                android:textSize="13sp"
+                                android:fontFamily="sans-serif" />
+                        </LinearLayout>
+
+                        <!-- Price and Items -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="$35.25"
+                                android:textColor="@color/dark_navy"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:fontFamily="sans-serif-medium" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="14dp"
+                                android:text="01 Items"
+                                android:textColor="@color/gray_text"
+                                android:textSize="13sp"
+                                android:fontFamily="sans-serif" />
+                        </LinearLayout>
+
+                        <!-- Buttons -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal">
+
+                            <!-- Track Order Button -->
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/trackOrder1"
+                                android:layout_width="0dp"
+                                android:layout_height="40dp"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="6dp"
+                                android:text="Track Order"
+                                android:textColor="@color/white"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:fontFamily="sans-serif-medium"
+                                android:textAllCaps="false"
+                                android:letterSpacing="0"
+                                app:backgroundTint="@color/coral"
+                                app:cornerRadius="8dp"
+                                app:elevation="0dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp" />
+
+                            <!-- Cancel Button -->
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/cancelOrder1"
+                                android:layout_width="0dp"
+                                android:layout_height="40dp"
+                                android:layout_weight="1"
+                                android:layout_marginStart="6dp"
+                                android:text="Cancel"
+                                android:textColor="@color/coral"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:fontFamily="sans-serif-medium"
+                                android:textAllCaps="false"
+                                android:letterSpacing="0"
+                                app:backgroundTint="@color/white"
+                                app:cornerRadius="8dp"
+                                app:strokeColor="@color/coral"
+                                app:strokeWidth="1.5dp"
+                                app:elevation="0dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Order Item 2 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="14dp">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="68dp"
+                        android:layout_height="68dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="#E8EBED">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"/>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="14dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Jacket - Nike"
+                                android:textColor="@color/dark_navy"
+                                android:textSize="15sp"
+                                android:textStyle="bold"
+                                android:fontFamily="sans-serif-medium" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="#242432"
+                                android:textColor="@color/gray_text"
+                                android:textSize="13sp"
+                                android:fontFamily="sans-serif" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="$40.15"
+                                android:textColor="@color/dark_navy"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:fontFamily="sans-serif-medium" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="14dp"
+                                android:text="02 Items"
+                                android:textColor="@color/gray_text"
+                                android:textSize="13sp"
+                                android:fontFamily="sans-serif" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/trackOrder2"
+                                android:layout_width="0dp"
+                                android:layout_height="40dp"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="6dp"
+                                android:text="Track Order"
+                                android:textColor="@color/white"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:fontFamily="sans-serif-medium"
+                                android:textAllCaps="false"
+                                android:letterSpacing="0"
+                                app:backgroundTint="@color/coral"
+                                app:cornerRadius="8dp"
+                                app:elevation="0dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/cancelOrder2"
+                                android:layout_width="0dp"
+                                android:layout_height="40dp"
+                                android:layout_weight="1"
+                                android:layout_marginStart="6dp"
+                                android:text="Cancel"
+                                android:textColor="@color/coral"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:fontFamily="sans-serif-medium"
+                                android:textAllCaps="false"
+                                android:letterSpacing="0"
+                                app:backgroundTint="@color/white"
+                                app:cornerRadius="8dp"
+                                app:strokeColor="@color/coral"
+                                app:strokeWidth="1.5dp"
+                                app:elevation="0dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Order Item 3 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="14dp">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="68dp"
+                        android:layout_height="68dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="#E8EBED">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                             />
+                    </androidx.cardview.widget.CardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="14dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Pant"
+                                android:textColor="@color/dark_navy"
+                                android:textSize="15sp"
+                                android:textStyle="bold"
+                                android:fontFamily="sans-serif-medium" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="#240112"
+                                android:textColor="@color/gray_text"
+                                android:textSize="13sp"
+                                android:fontFamily="sans-serif" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="$10.20"
+                                android:textColor="@color/dark_navy"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:fontFamily="sans-serif-medium" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="14dp"
+                                android:text="01 Items"
+                                android:textColor="@color/gray_text"
+                                android:textSize="13sp"
+                                android:fontFamily="sans-serif" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/trackOrder3"
+                                android:layout_width="0dp"
+                                android:layout_height="40dp"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="6dp"
+                                android:text="Track Order"
+                                android:textColor="@color/white"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:fontFamily="sans-serif-medium"
+                                android:textAllCaps="false"
+                                android:letterSpacing="0"
+                                app:backgroundTint="@color/coral"
+                                app:cornerRadius="8dp"
+                                app:elevation="0dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/cancelOrder3"
+                                android:layout_width="0dp"
+                                android:layout_height="40dp"
+                                android:layout_weight="1"
+                                android:layout_marginStart="6dp"
+                                android:text="Cancel"
+                                android:textColor="@color/coral"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:fontFamily="sans-serif-medium"
+                                android:textAllCaps="false"
+                                android:letterSpacing="0"
+                                app:backgroundTint="@color/white"
+                                app:cornerRadius="8dp"
+                                app:strokeColor="@color/coral"
+                                app:strokeWidth="1.5dp"
+                                app:elevation="0dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</RelativeLayout>
