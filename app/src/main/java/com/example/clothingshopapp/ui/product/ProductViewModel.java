@@ -9,6 +9,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import com.example.clothingshopapp.R;
+import com.example.clothingshopapp.ui.auth.ProfileActivity;
+import com.example.clothingshopapp.ui.notification.NotificationActivity;
+import com.example.clothingshopapp.ui.orders.MyOrdersActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class ProductViewModel extends AppCompatActivity {
@@ -136,16 +139,16 @@ public class ProductViewModel extends AppCompatActivity {
             if (itemId == R.id.nav_home) {
                 return true;
             } else if (itemId == R.id.nav_notifications) {
-                Toast.makeText(this, "Thông báo", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(ProductViewModel.this, NotificationActivity.class);
+                startActivity(intent);
                 return true;
             } else if (itemId == R.id.nav_orders) {
-                Toast.makeText(this, "Đơn hàng", Toast.LENGTH_SHORT).show();
+                // Chuyển sang màn hình orders
+                Intent intent = new Intent(ProductViewModel.this, MyOrdersActivity.class);
+                startActivity(intent);
                 return true;
             } else if (itemId == R.id.nav_profile) {
-                Toast.makeText(this, "Tài khoản", Toast.LENGTH_SHORT).show();
-                return true;
-            } else if (itemId == R.id.nav_orders) {
-                Intent intent = new Intent(ProductViewModel.this, com.example.clothingshopapp.ui.orders.MyOrdersActivity.class);
+                Intent intent = new Intent(ProductViewModel.this, ProfileActivity.class);
                 startActivity(intent);
                 return true;
             }
