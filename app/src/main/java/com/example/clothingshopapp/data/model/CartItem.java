@@ -1,30 +1,28 @@
-// File: data/model/CartItem.java
 package com.example.clothingshopapp.data.model;
 
 public class CartItem {
-    private String name;
-    private double price; // SỬA: Dùng double thay vì String
-    private String size;
+    private String firebaseKey; // ⭐ THÊM DÒNG NÀY
+    private Product product;
+    private Variant variant;
     private int quantity;
-    private int imageResId; // Tạm thời dùng cho mock data
+    private String size;
 
-    // Constructor
-    public CartItem(String name, double price, String size, int quantity, int imageResId) {
-        this.name = name;
-        this.price = price;
-        this.size = size;
+    public CartItem(Product product, Variant variant, int quantity, String size) {
+        this.product = product;
+        this.variant = variant;
         this.quantity = quantity;
-        this.imageResId = imageResId;
+        this.size = size;
     }
 
-    // Getters
-    public String getName() { return name; }
-    public double getPrice() { return price; }
-    public String getSize() { return size; }
+    // --- Getters ---
+    public String getFirebaseKey() { return firebaseKey; } // ⭐ THÊM HÀM NÀY
+    public Product getProduct() { return product; }
+    public Variant getVariant() { return variant; }
     public int getQuantity() { return quantity; }
-    public int getImageResId() { return imageResId; }
+    public String getSize() { return size; }
 
-    // Setter
+    // --- Setters ---
+    public void setFirebaseKey(String firebaseKey) { this.firebaseKey = firebaseKey; } // ⭐ THÊM HÀM NÀY
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }

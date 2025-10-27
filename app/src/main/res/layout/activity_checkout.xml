@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
     android:fillViewport="true"
     tools:context=".ui.cart.CheckoutActivity">
 
@@ -16,8 +18,9 @@
             android:id="@+id/back_arrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_arrow_back"
             android:contentDescription="Back"
+            android:padding="8dp"
+            android:src="@drawable/ic_arrow_back"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,6 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Checkout"
+            android:textColor="@color/dark_navy"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/back_arrow"
@@ -33,15 +37,68 @@
             app:layout_constraintTop_toTopOf="@id/back_arrow" />
 
         <TextView
-            android:id="@+id/payment_method_label"
+            android:id="@+id/delivery_address_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:text="Payment method"
+            android:text="Delivery Address"
+            android:textColor="@color/dark_navy"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/back_arrow" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/address_card"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="12dp"
+            app:strokeColor="#E0E0E0"
+            app:strokeWidth="1dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/delivery_address_label">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/shippingAddressText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@id/edit_address_icon"
+                    android:lineSpacingExtra="4dp"
+                    android:textColor="@color/dark_navy"
+                    android:textSize="15sp"
+                    tools:text="Please add a shipping address..." />
+
+                <ImageView
+                    android:id="@+id/edit_address_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_edit"
+                    app:tint="@color/dark_navy"/>
+            </RelativeLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/payment_method_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Payment method"
+            android:textColor="@color/dark_navy"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/address_card" />
 
         <RadioGroup
             android:id="@+id/payment_radio_group"
@@ -52,107 +109,26 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/payment_method_label">
 
-            <RadioButton android:id="@+id/radio_gpay" android:text="Gpay" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-            <RadioButton android:id="@+id/radio_card" android:text="Debit / Credit Card" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-            <RadioButton android:id="@+id/radio_paypal" android:text="Paypal" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-            <RadioButton android:id="@+id/radio_bank" android:text="Bank Transfer" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+            <RadioButton
+                android:id="@+id/radio_cod"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Cash on Delivery (COD)" />
+
+            <RadioButton
+                android:id="@+id/radio_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Debit / Credit Card" />
+
+            <RadioButton
+                android:id="@+id/radio_paypal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Paypal" />
+
         </RadioGroup>
-
-        <TextView
-            android:id="@+id/delivery_address_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Delivery Address"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/payment_radio_group" />
-
-        <LinearLayout
-            android:id="@+id/address_container"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/delivery_address_label">
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/address_card_1"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                app:cardBackgroundColor="@color/black"
-                app:cardCornerRadius="12dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <RadioButton
-                        android:id="@+id/radio_address_1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:text="Selina K"
-                        android:textColor="@color/white" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="21/3, Ragava Street,\nSilver tone,\nKodaikanal - 655 789"
-                        android:textColor="@android:color/darker_gray" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/address_card_2"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="16dp"
-                android:layout_weight="1"
-                app:cardCornerRadius="12dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <RadioButton
-                        android:id="@+id/radio_address_2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Raghu V"
-                        android:textColor="@color/black" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="44, Aramain,\nDown Town,\nKodaikanal - 655 789"
-                        android:textColor="@android:color/darker_gray" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/add_new_address_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:drawablePadding="8dp"
-            android:text="Add a New Address"
-            android:textColor="@color/design_default_color_primary"
-            app:drawableStartCompat="@drawable/ic_add"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/address_container" />
 
         <TextView
             android:id="@+id/amount_label"
@@ -160,6 +136,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:text="Amount Payable"
+            android:textColor="@color/gray_text"
             app:layout_constraintBottom_toTopOf="@id/pay_button"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -167,18 +144,19 @@
             android:id="@+id/amount_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="$90.00"
-            android:textColor="@color/design_default_color_primary"
+            android:textColor="@color/coral"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/amount_label"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/amount_label" />
+            app:layout_constraintTop_toTopOf="@id/amount_label"
+            tools:text="0 ₫" />
 
         <Button
             android:id="@+id/pay_button"
             android:layout_width="0dp"
             android:layout_height="60dp"
+            android:backgroundTint="@color/coral"
             android:text="Pay and Complete Order"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
