@@ -1,5 +1,6 @@
 package com.example.clothingshopapp.ui.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,25 +21,32 @@ import java.util.Locale;
 public class CartAdapter extends ListAdapter<CartItem, CartAdapter.CartViewHolder> {
 
     private final CartItemListener listener;
+    private final boolean isReadOnly; // ⭐ BIẾN ĐỂ KIỂM SOÁT
 
     public interface CartItemListener {
         void onQuantityChanged(CartItem item, int newQuantity);
         void onItemRemoved(CartItem item);
     }
 
+    // Constructor cũ (dùng cho CartActivity)
     public CartAdapter(CartItemListener listener) {
+        this(listener, false); // Mặc định là không "chỉ đọc"
+    }
+
+    // ⭐ CONSTRUCTOR MỚI (dùng cho OrderDetailActivity)
+    public CartAdapter(CartItemListener listener, boolean isReadOnly) {
         super(DIFF_CALLBACK);
         this.listener = listener;
+        this.isReadOnly = isReadOnly; // Gán giá trị
     }
 
     private static final DiffUtil.ItemCallback<CartItem> DIFF_CALLBACK = new DiffUtil.ItemCallback<CartItem>() {
         @Override
         public boolean areItemsTheSame(@NonNull CartItem oldItem, @NonNull CartItem newItem) {
-            // Key của Firebase là định danh duy nhất
-            if(oldItem.getFirebaseKey() != null && newItem.getFirebaseKey() != null) {
+            if (oldItem.getFirebaseKey() != null && newItem.getFirebaseKey() != null) {
                 return oldItem.getFirebaseKey().equals(newItem.getFirebaseKey());
             }
-            // Fallback nếu không có key
+            // Fallback cho trường hợp key null (ví dụ: màn hình checkout "Buy Now")
             return oldItem.getProduct().getProductId().equals(newItem.getProduct().getProductId()) &&
                     oldItem.getVariant().getColor().equals(newItem.getVariant().getColor()) &&
                     oldItem.getSize().equals(newItem.getSize());
@@ -54,13 +62,16 @@ public class CartAdapter extends ListAdapter<CartItem, CartAdapter.CartViewHolde
     @Override
     public CartViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_cart, parent, false);
-        return new CartViewHolder(view);
+        // ⭐ Truyền isReadOnly xuống ViewHolder
+        return new CartViewHolder(view, isReadOnly);
     }
 
     @Override
     public void onBindViewHolder(@NonNull CartViewHolder holder, int position) {
         CartItem item = getItem(position);
-        holder.bind(item, listener);
+        if (item != null) {
+            holder.bind(item, listener);
+        }
     }
 
     static class CartViewHolder extends RecyclerView.ViewHolder {
@@ -68,23 +79,24 @@ public class CartAdapter extends ListAdapter<CartItem, CartAdapter.CartViewHolde
         TextView productName, productAttributes, productPrice, quantityText;
         Button buttonMinus, buttonPlus;
         ImageView deleteIcon;
+        private final boolean isReadOnlyView; // ⭐ Biến lưu trạng thái
 
-        public CartViewHolder(@NonNull View itemView) {
+        public CartViewHolder(@NonNull View itemView, boolean isReadOnly) { // ⭐ Sửa constructor
             super(itemView);
             productImage = itemView.findViewById(R.id.product_image);
             productName = itemView.findViewById(R.id.product_name);
-            productAttributes = itemView.findViewById(R.id.product_attributes); // Gán vào ID mới
+            productAttributes = itemView.findViewById(R.id.product_attributes);
             productPrice = itemView.findViewById(R.id.product_price);
             quantityText = itemView.findViewById(R.id.quantity_text);
             buttonMinus = itemView.findViewById(R.id.button_minus);
             buttonPlus = itemView.findViewById(R.id.button_plus);
             deleteIcon = itemView.findViewById(R.id.delete_icon);
+
+            this.isReadOnlyView = isReadOnly; // ⭐ Lưu lại
         }
 
         public void bind(final CartItem item, final CartItemListener listener) {
             productName.setText(item.getProduct().getName());
-
-            // ⭐ CẬP NHẬT TEXT CHO CẢ MÀU VÀ SIZE ⭐
             String attributes = "Màu sắc: " + item.getVariant().getColor() + " / Size: " + item.getSize();
             productAttributes.setText(attributes);
 
@@ -94,32 +106,52 @@ public class CartAdapter extends ListAdapter<CartItem, CartAdapter.CartViewHolde
             quantityText.setText(String.valueOf(item.getQuantity()));
 
             Glide.with(itemView.getContext())
-                    .load(item.getVariant().getImageUrl())
+                    .load(item.getVariant().getFirstImageUrl())
                     .placeholder(R.color.gray_icon)
+                    .error(R.drawable.ic_error_placeholder)
                     .into(productImage);
 
-            // Listeners
-            buttonPlus.setOnClickListener(v -> listener.onQuantityChanged(item, item.getQuantity() + 1));
-            buttonMinus.setOnClickListener(v -> {
-                if (item.getQuantity() > 1) {
-                    listener.onQuantityChanged(item, item.getQuantity() - 1);
-                } else {
-                    showRemoveConfirmationDialog(item, listener);
+            // ⭐ LOGIC ẨN/HIỆN QUAN TRỌNG
+            if (isReadOnlyView) {
+                // Chế độ "Chỉ đọc": Ẩn hết các nút
+                buttonMinus.setVisibility(View.GONE);
+                buttonPlus.setVisibility(View.GONE);
+                deleteIcon.setVisibility(View.GONE);
+
+                // Hiển thị số lượng rõ hơn
+                quantityText.setText("SL: " + item.getQuantity());
+
+            } else {
+                // Chế độ "Giỏ hàng": Hiện các nút và gán listener
+                buttonMinus.setVisibility(View.VISIBLE);
+                buttonPlus.setVisibility(View.VISIBLE);
+                deleteIcon.setVisibility(View.VISIBLE);
+
+                // Listener chỉ được gán khi không phải read-only
+                // (Kiểm tra listener != null để tránh lỗi khi truyền null từ OrderDetailActivity)
+                if (listener != null) {
+                    buttonPlus.setOnClickListener(v -> listener.onQuantityChanged(item, item.getQuantity() + 1));
+                    buttonMinus.setOnClickListener(v -> {
+                        if (item.getQuantity() > 1) {
+                            listener.onQuantityChanged(item, item.getQuantity() - 1);
+                        } else {
+                            showRemoveConfirmationDialog(item, listener);
+                        }
+                    });
+                    deleteIcon.setOnClickListener(v -> showRemoveConfirmationDialog(item, listener));
                 }
-            });
-            deleteIcon.setOnClickListener(v -> showRemoveConfirmationDialog(item, listener));
+            }
         }
+
         private void showRemoveConfirmationDialog(final CartItem item, final CartItemListener listener) {
             new MaterialAlertDialogBuilder(itemView.getContext())
                     .setTitle("Xóa sản phẩm")
-                    .setMessage("Bạn có chắc chắn muốn bỏ sản phẩm này khỏi giỏ hàng không?")
-                    .setNegativeButton("Hủy", (dialog, which) -> {
-                        // Người dùng chọn "Hủy", không làm gì cả
-                        dialog.dismiss();
-                    })
+                    .setMessage("Bạn có chắc chắn muốn bỏ sản phẩm này?")
+                    .setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss())
                     .setPositiveButton("Xóa", (dialog, which) -> {
-                        // Người dùng chọn "Xóa", gọi đến interface để xóa item
-                        listener.onItemRemoved(item);
+                        if (listener != null) {
+                            listener.onItemRemoved(item);
+                        }
                     })
                     .show();
         }

@@ -1,10 +1,11 @@
 package com.example.clothingshopapp.data.model;
 
-public class Size {
+import java.io.Serializable; // ⭐ THÊM IMPORT
+
+public class Size implements Serializable { // ⭐ THÊM "implements Serializable"
     private String size;
     private int stock;
 
-    // Constructor rỗng cho Firebase
     public Size() {}
 
     // Getters

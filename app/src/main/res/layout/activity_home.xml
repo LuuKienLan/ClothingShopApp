@@ -30,13 +30,12 @@
                 android:layout_centerVertical="true"
                 app:cardCornerRadius="25dp"
                 app:cardElevation="2dp">
-
                 <ImageView
                     android:id="@+id/userAvatar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_default_profile" />
+                    android:src="@drawable/ic_default_profile"
+                    android:scaleType="centerCrop" />
             </androidx.cardview.widget.CardView>
 
             <TextView
@@ -58,35 +57,33 @@
                 android:layout_height="50dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless">
 
                 <ImageView
                     android:id="@+id/cartIcon"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_shopping_bag"
+                    android:src="@drawable/ic_cart_nav"
                     app:tint="@color/dark_navy" />
 
                 <TextView
                     android:id="@+id/cartBadge"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
                     android:layout_gravity="top|end"
                     android:layout_marginTop="6dp"
                     android:layout_marginEnd="6dp"
-                    android:background="@drawable/badge_circle"
-                    android:gravity="center"
+                    android:background="@drawable/rounded_corner_orange" android:gravity="center"
                     android:textColor="@color/white"
-                    android:textSize="10sp"
+                    android:textSize="11sp"
                     android:textStyle="bold"
                     android:visibility="gone"
                     tools:text="3"
                     tools:visibility="visible" />
             </FrameLayout>
-
         </RelativeLayout>
 
         <TextView
@@ -97,8 +94,6 @@
             android:layout_marginTop="12dp"
             android:layout_marginEnd="20dp"
             android:fontFamily="@font/quicksand_font"
-            android:letterSpacing="-0.01"
-            android:lineSpacingExtra="2dp"
             android:text="Find the best fit for\nall your needs!"
             android:textColor="@color/dark_navy"
             android:textSize="40sp"
@@ -122,7 +117,6 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_search_outlined"
                 app:tint="@color/gray_icon" />
-
             <EditText
                 android:id="@+id/searchInput"
                 android:layout_width="match_parent"
@@ -136,11 +130,9 @@
                 android:hint="Search"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
-                android:maxLines="1"
                 android:textColor="@color/dark_navy"
                 android:textColorHint="@color/hint_gray"
                 android:textSize="15sp" />
-
             <ImageView
                 android:id="@+id/filterIcon"
                 android:layout_width="22dp"
@@ -148,14 +140,32 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_filter_lines"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 app:tint="@color/dark_navy" />
         </RelativeLayout>
+
+        <TextView
+            android:id="@+id/textSortBy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="20dp"
+            android:padding="8dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="Sắp xếp theo: Mặc định"
+            android:textColor="@color/dark_navy"
+            android:textStyle="bold"
+            app:drawableEndCompat="@drawable/ic_arrow_down"
+            app:drawableTint="@color/dark_navy"
+            android:drawablePadding="4dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/productsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="16dp" android:clipToPadding="false"
+            android:layout_marginTop="8dp"
+            android:clipToPadding="false"
             android:overScrollMode="never"
             android:paddingHorizontal="12dp"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
@@ -172,13 +182,14 @@
         android:layout_alignParentBottom="true"
         android:background="@color/white"
         android:fitsSystemWindows="true"
-        android:paddingTop="8dp"
-        android:paddingBottom="4dp"
         app:elevation="12dp"
         app:itemIconSize="30dp"
         app:itemIconTint="@color/bottom_nav_selector"
         app:itemTextColor="@color/bottom_nav_selector"
         app:labelVisibilityMode="labeled"
-        app:menu="@menu/bottom_navigation_menu" />
+        app:menu="@menu/bottom_navigation_menu"
+        android:paddingTop="8dp"
+        android:paddingBottom="4dp"
+        />
 
 </RelativeLayout>

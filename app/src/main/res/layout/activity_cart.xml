@@ -31,6 +31,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/back_arrow" />
 
+    <TextView
+        android:id="@+id/clearAllButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete all"
+        android:textColor="@color/coral"
+        android:textStyle="bold"
+        android:padding="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/back_arrow"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cart_recycler_view"
         android:layout_width="0dp"
@@ -106,7 +121,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_margin="16dp"
-        android:text="Proceed to Checkout"
+        android:text="Proceed To Checkout"
         android:textColor="@color/white"
         app:backgroundTint="@color/coral"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -191,20 +206,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <EditText
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Promo Code"
-            android:inputType="text"
-            android:padding="12dp" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Apply"
-            android:textColor="@color/white"
-            app:backgroundTint="@color/coral" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

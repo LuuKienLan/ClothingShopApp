@@ -1,15 +1,17 @@
 package com.example.clothingshopapp.data.model;
 
-public class OrderItem {
+import java.io.Serializable; // ⭐ THÊM IMPORT
+
+public class OrderItem implements Serializable { // ⭐ THÊM "implements Serializable"
     private String productId;
     private String productName;
     private String color;
     private String size;
     private int quantity;
-    private double price; // Price at the time of order
+    private double price;
     private String imageUrl;
 
-    public OrderItem() {} // Needed for Firebase
+    public OrderItem() {}
 
     public OrderItem(String productId, String productName, String color, String size, int quantity, double price, String imageUrl) {
         this.productId = productId;

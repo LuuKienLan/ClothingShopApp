@@ -1,7 +1,9 @@
 package com.example.clothingshopapp.data.model;
 
-public class CartItem {
-    private String firebaseKey; // ⭐ THÊM DÒNG NÀY
+import java.io.Serializable; // ⭐ THÊM
+
+public class CartItem implements Serializable { // ⭐ THÊM
+    private String firebaseKey;
     private Product product;
     private Variant variant;
     private int quantity;
@@ -14,16 +16,14 @@ public class CartItem {
         this.size = size;
     }
 
-    // --- Getters ---
-    public String getFirebaseKey() { return firebaseKey; } // ⭐ THÊM HÀM NÀY
+    // Getters
+    public String getFirebaseKey() { return firebaseKey; }
     public Product getProduct() { return product; }
     public Variant getVariant() { return variant; }
     public int getQuantity() { return quantity; }
     public String getSize() { return size; }
 
-    // --- Setters ---
-    public void setFirebaseKey(String firebaseKey) { this.firebaseKey = firebaseKey; } // ⭐ THÊM HÀM NÀY
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+    // Setters
+    public void setFirebaseKey(String firebaseKey) { this.firebaseKey = firebaseKey; }
+    public void setQuantity(int quantity) { this.quantity = quantity; }
 }

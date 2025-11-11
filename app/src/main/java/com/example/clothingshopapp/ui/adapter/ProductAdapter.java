@@ -51,7 +51,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         holder.productPrice.setText(formatter.format(product.getBasePrice()));
 
         if (product.getVariants() != null && !product.getVariants().isEmpty()) {
-            String imageUrl = product.getVariants().get(0).getImageUrl();
+            // ⭐ SỬA DÒNG NÀY (từ .getImageUrl() -> .getFirstImageUrl())
+            String imageUrl = product.getVariants().get(0).getFirstImageUrl();
+
             Glide.with(context)
                     .load(imageUrl)
                     .placeholder(R.color.gray_icon)

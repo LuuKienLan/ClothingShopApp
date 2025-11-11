@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F8F8"
+    android:fitsSystemWindows="true"
+    tools:context=".ui.orders.OrderDetailActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:elevation="2dp">
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIconTint="@color/dark_navy"
+            app:title="Order Details" app:titleTextColor="@color/dark_navy" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:id="@+id/orderInfoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/appBarLayout"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:padding="16dp"
+        android:elevation="2dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:id="@+id/orderIdText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Order ID: #123456ABC" android:textColor="@color/dark_navy"
+            android:textStyle="bold"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/orderDateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Date placed: 04/11/2025" android:textColor="@color/gray_text"
+            android:layout_marginTop="6dp"/>
+
+        <TextView
+            android:id="@+id/orderStatusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Status: Delivered" android:textColor="@color/green"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:layout_marginTop="6dp"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/bottomActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:elevation="8dp"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <Button
+            android:id="@+id/confirmOrderButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:backgroundTint="@color/coral"
+            android:text="Proceed to Payment" app:cornerRadius="12dp" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomActionBar"
+        android:layout_below="@id/orderInfoLayout">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Shipping Information" android:textColor="@color/dark_navy"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/address_background"
+                android:padding="12dp">
+
+                <TextView
+                    android:id="@+id/shippingAddressText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/dark_navy"
+                    android:lineSpacingExtra="4dp"
+                    tools:text="123 Vo Van Tan, Q3, TP.HCM" />
+
+                <TextView
+                    android:id="@+id/shippingPhoneText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/dark_navy"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:drawableStartCompat="@drawable/ic_phone"
+                    app:drawableTint="@color/dark_navy"
+                    tools:text="0987654321" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Products" android:textColor="@color/dark_navy"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/orderItemsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="2"
+                tools:listitem="@layout/item_cart"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/grey_200"
+                app:strokeWidth="1dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Subtotal" android:textColor="@color/gray_text"/>
+                        <TextView
+                            android:id="@+id/subTotalValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            tools:text="250.000đ"
+                            android:textColor="@color/dark_navy"/>
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Shipping Fee" android:textColor="@color/gray_text"/>
+                        <TextView
+                            android:id="@+id/shippingValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            tools:text="30.000đ"
+                            android:textColor="@color/dark_navy"/>
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/grey_200"
+                        android:layout_marginVertical="12dp"/>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Total Amount" android:textColor="@color/dark_navy"
+                            android:textStyle="bold"
+                            android:textSize="16sp"/>
+                        <TextView
+                            android:id="@+id/totalAmountValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            tools:text="280.000đ"
+                            android:textColor="@color/coral"
+                            android:textStyle="bold"
+                            android:textSize="18sp"/>
+                    </RelativeLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

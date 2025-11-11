@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28"/>
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
     <application
+        android:name=".ui.MainApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -72,6 +76,36 @@
             android:name=".ui.map.MapActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ui.cart.PaymentResultActivity"
+            android:exported="true"
+            android:launchMode="singleTop"> <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="myapp" android:host="payment-result" />
+        </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.cart.MapAddressSelectionActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.orders.TrackOrderActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.orders.OrderDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.chat.ChatActivity"
+            android:exported="false" />
+
+
+        <activity
+            android:name=".ui.auth.ShopAdminActivity"
+            android:exported="false" />
 
     </application>
 

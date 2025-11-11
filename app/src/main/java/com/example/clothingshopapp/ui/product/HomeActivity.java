@@ -1,20 +1,25 @@
 package com.example.clothingshopapp.ui.product;
 
-import com.example.clothingshopapp.ui.map.MapActivity;
-
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.MenuItem; // ⭐ Import
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.PopupMenu; // ⭐ Import
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,10 +32,15 @@ import com.example.clothingshopapp.data.repository.ProductRepository;
 import com.example.clothingshopapp.ui.adapter.ProductAdapter;
 import com.example.clothingshopapp.ui.auth.ProfileActivity;
 import com.example.clothingshopapp.ui.cart.CartActivity;
+import com.example.clothingshopapp.ui.chat.ChatActivity;
+import com.example.clothingshopapp.ui.map.MapActivity;
 import com.example.clothingshopapp.ui.orders.MyOrdersActivity;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,20 +48,31 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity
+        implements FilterBottomSheetDialogFragment.FilterListener, SortBottomSheetDialogFragment.SortListener {
 
     private RecyclerView productsRecyclerView;
     private ProductAdapter productAdapter;
     private TextView cartBadge, greetingText;
-    private ImageView userAvatar, filterIcon; // ⭐ filterIcon
+    private ImageView userAvatar, filterIcon;
+    private TextView textSortBy;
     private FrameLayout cartContainer;
     private BottomNavigationView bottomNavigation;
     private EditText searchInput;
     private ProductRepository productRepository;
     private FirebaseAuth mAuth;
 
+    private FirebaseFirestore db;
+    private ListenerRegistration chatListenerRegistration;
+    private static final String SHOP_UID = "leTUI0RSJGaAZDLe0qZhC5LlP1p2";
+
+    private View loadingOverlay;
     private List<Product> originalProductList = new ArrayList<>();
-    private int currentSortOptionId = R.id.sort_default; // ⭐ Lưu lựa chọn sort
+    private int currentSortOptionId = R.id.sort_default;
+    private String currentCategoryFilter = "Tất cả";
+    private int currentPriceRangeId = R.id.chipPriceAll;
+    private FilterSortTask currentFilterTask;
+    private ActivityResultLauncher<String> requestPermissionLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,20 +81,38 @@ public class HomeActivity extends AppCompatActivity {
 
         productRepository = new ProductRepository();
         mAuth = FirebaseAuth.getInstance();
-
-        if (mAuth.getCurrentUser() != null) {
-            CartManager.getInstance().initializeForUser();
-        }
+        db = FirebaseFirestore.getInstance();
 
         initViews();
+        setupPermissionLauncher();
+        askForNotificationPermission();
         setupUserGreeting();
         setupRecyclerView();
         setupClickListeners();
         setupSearchListener();
-        setupFilterListener(); // ⭐ Listener cho icon filter để mở Sort Menu
+        setupSortListener();
+        setupFilterListener();
         setupBottomNavigation();
         loadProductsFromFirebase();
         observeCartChanges();
+    }
+
+    private void setupPermissionLauncher() {
+        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+            if (isGranted) {
+                Toast.makeText(this, "Đã cấp quyền thông báo!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Bạn sẽ không nhận được thông báo giỏ hàng.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void askForNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        }
     }
 
     @Override
@@ -81,7 +120,20 @@ public class HomeActivity extends AppCompatActivity {
         super.onResume();
         bottomNavigation.setSelectedItemId(R.id.nav_home);
         setupUserGreeting();
-        // Cart badge updated via LiveData observer
+        setupChatBadgeListener();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (currentFilterTask != null && currentFilterTask.getStatus() == AsyncTask.Status.RUNNING) {
+            currentFilterTask.cancel(true);
+            currentFilterTask = null;
+        }
+        if (chatListenerRegistration != null) {
+            chatListenerRegistration.remove();
+            chatListenerRegistration = null;
+        }
     }
 
     private void initViews() {
@@ -92,7 +144,8 @@ public class HomeActivity extends AppCompatActivity {
         greetingText = findViewById(R.id.greetingText);
         userAvatar = findViewById(R.id.userAvatar);
         searchInput = findViewById(R.id.searchInput);
-        filterIcon = findViewById(R.id.filterIcon); // ⭐ Ánh xạ icon filter
+        filterIcon = findViewById(R.id.filterIcon);
+        textSortBy = findViewById(R.id.textSortBy);
     }
 
     private void observeCartChanges() {
@@ -102,11 +155,11 @@ public class HomeActivity extends AppCompatActivity {
             if (cartLiveData != null) {
                 cartLiveData.observe(this, this::updateCartBadge);
             } else {
-                cartManager.initializeForUser(); // Try initializing again
+                cartManager.initializeForUser();
                 cartManager.getCartItemsLiveData().observe(this, this::updateCartBadge);
             }
         } else {
-            updateCartBadge(new ArrayList<>()); // Show empty badge if not logged in
+            updateCartBadge(new ArrayList<>());
         }
     }
 
@@ -138,38 +191,28 @@ public class HomeActivity extends AppCompatActivity {
         searchInput.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterAndSortProducts(); // Lọc khi gõ
+                filterAndSortProducts();
             }
             @Override public void afterTextChanged(Editable s) {}
         });
     }
 
-    // ⭐ Listener cho icon Filter để mở Sort Menu ⭐
-    private void setupFilterListener() {
-        filterIcon.setOnClickListener(v -> {
-            showSortMenu(v); // Gọi hàm hiển thị PopupMenu
+    private void setupSortListener() {
+        textSortBy.setOnClickListener(v -> {
+            SortBottomSheetDialogFragment bottomSheet =
+                    SortBottomSheetDialogFragment.newInstance(currentSortOptionId);
+            bottomSheet.setSortListener(this);
+            bottomSheet.show(getSupportFragmentManager(), bottomSheet.getTag());
         });
     }
 
-    // ⭐ HÀM MỚI: HIỂN THỊ POPUP MENU SẮP XẾP ⭐
-    private void showSortMenu(View anchorView) {
-        PopupMenu popup = new PopupMenu(this, anchorView);
-        // Nạp menu từ file XML
-        popup.getMenuInflater().inflate(R.menu.sort_menu, popup.getMenu());
-
-        // Đặt listener khi một mục menu được chọn
-        popup.setOnMenuItemClickListener(item -> {
-            int itemId = item.getItemId();
-            // Chỉ cập nhật nếu lựa chọn thay đổi
-            if (itemId != currentSortOptionId) {
-                currentSortOptionId = itemId; // Lưu lại lựa chọn mới
-                filterAndSortProducts(); // Áp dụng sắp xếp mới
-                Toast.makeText(HomeActivity.this, "Sắp xếp theo: " + item.getTitle(), Toast.LENGTH_SHORT).show();
-            }
-            return true;
+    private void setupFilterListener() {
+        filterIcon.setOnClickListener(v -> {
+            FilterBottomSheetDialogFragment bottomSheet =
+                    FilterBottomSheetDialogFragment.newInstance(currentCategoryFilter, currentPriceRangeId);
+            bottomSheet.setFilterListener(this);
+            bottomSheet.show(getSupportFragmentManager(), bottomSheet.getTag());
         });
-
-        popup.show(); // Hiển thị menu
     }
 
     private void setupRecyclerView() {
@@ -185,50 +228,109 @@ public class HomeActivity extends AppCompatActivity {
             public void onProductsLoaded(List<Product> products) {
                 originalProductList.clear();
                 originalProductList.addAll(products);
-                filterAndSortProducts(); // Áp dụng lọc/sắp xếp ban đầu
+                filterAndSortProducts();
                 productsRecyclerView.setVisibility(View.VISIBLE);
             }
             @Override
             public void onError(String message) {
                 Toast.makeText(HomeActivity.this, "Lỗi tải sản phẩm: " + message, Toast.LENGTH_SHORT).show();
                 productsRecyclerView.setVisibility(View.VISIBLE);
-                filterAndSortProducts(); // Hiển thị list rỗng nếu lỗi
+                filterAndSortProducts();
             }
         });
     }
 
-    // ⭐ HÀM KẾT HỢP LỌC VÀ SẮP XẾP ⭐
     private void filterAndSortProducts() {
+        if (currentFilterTask != null && currentFilterTask.getStatus() == AsyncTask.Status.RUNNING) {
+            currentFilterTask.cancel(true);
+        }
         String query = searchInput.getText().toString().toLowerCase().trim();
-        List<Product> filteredList;
-
-        // 1. Lọc theo Search Query
-        if (query.isEmpty()) {
-            filteredList = new ArrayList<>(originalProductList);
-        } else {
-            // Sử dụng Java 8 streams cho gọn
-            filteredList = originalProductList.stream()
-                    .filter(product -> product.getName() != null && product.getName().toLowerCase().contains(query))
-                    .collect(Collectors.toList());
-        }
-
-        // 2. Sắp xếp danh sách đã lọc dựa vào currentSortOptionId
-        if (currentSortOptionId == R.id.sort_price_asc) {
-            Collections.sort(filteredList, Comparator.comparingDouble(Product::getBasePrice));
-        } else if (currentSortOptionId == R.id.sort_price_desc) {
-            Collections.sort(filteredList, Comparator.comparingDouble(Product::getBasePrice).reversed());
-        } else if (currentSortOptionId == R.id.sort_name_asc) {
-            Collections.sort(filteredList, Comparator.comparing(Product::getName, String.CASE_INSENSITIVE_ORDER));
-        } else if (currentSortOptionId == R.id.sort_name_desc) {
-            Collections.sort(filteredList, Comparator.comparing(Product::getName, String.CASE_INSENSITIVE_ORDER).reversed());
-        }
-        // else if (currentSortOptionId == R.id.sort_default) {
-        // Không cần làm gì, giữ nguyên thứ tự sau khi lọc
-        // }
-
-        // 3. Cập nhật Adapter
-        productAdapter.updateProducts(filteredList);
+        currentFilterTask = new FilterSortTask(query, currentCategoryFilter, currentPriceRangeId, currentSortOptionId);
+        currentFilterTask.execute(new ArrayList<>(originalProductList));
     }
+
+    // ⭐⭐⭐ BẮT ĐẦU SỬA (THÊM LOGIC SORT THEO TÊN) ⭐⭐⭐
+    private class FilterSortTask extends AsyncTask<List<Product>, Void, List<Product>> {
+        private String query;
+        private String category;
+        private int priceRangeId;
+        private int sortId;
+
+        FilterSortTask(String query, String category, int priceRangeId, int sortId) {
+            this.query = query;
+            this.category = category;
+            this.priceRangeId = priceRangeId;
+            this.sortId = sortId;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected List<Product> doInBackground(List<Product>... params) {
+            List<Product> originalList = params[0];
+            List<Product> filteredList;
+
+            // 1. Lọc (Filter)
+            if (query.isEmpty()) {
+                filteredList = new ArrayList<>(originalList);
+            } else {
+                filteredList = originalList.stream()
+                        .filter(product -> product.getName() != null && product.getName().toLowerCase().contains(query))
+                        .collect(Collectors.toList());
+            }
+
+            if (!"Tất cả".equalsIgnoreCase(category)) {
+                if (isCancelled()) return null;
+                String categoryToFilter = category.toLowerCase();
+                filteredList = filteredList.stream()
+                        .filter(product -> product.getCategory() != null && product.getCategory().equalsIgnoreCase(categoryToFilter))
+                        .collect(Collectors.toList());
+            }
+
+            if (isCancelled()) return null;
+            if (priceRangeId == R.id.chipPrice1) {
+                filteredList = filteredList.stream()
+                        .filter(p -> p.getBasePrice() < 200000)
+                        .collect(Collectors.toList());
+            } else if (priceRangeId == R.id.chipPrice2) {
+                filteredList = filteredList.stream()
+                        .filter(p -> p.getBasePrice() >= 200000 && p.getBasePrice() <= 400000)
+                        .collect(Collectors.toList());
+            } else if (priceRangeId == R.id.chipPrice3) {
+                filteredList = filteredList.stream()
+                        .filter(p -> p.getBasePrice() > 400000)
+                        .collect(Collectors.toList());
+            }
+
+            // 2. Sắp xếp (Sort)
+            if (isCancelled()) return null;
+            if (sortId == R.id.sort_price_asc) {
+                // Sắp xếp Giá: Thấp đến Cao
+                Collections.sort(filteredList, Comparator.comparingDouble(Product::getBasePrice));
+            } else if (sortId == R.id.sort_price_desc) {
+                // Sắp xếp Giá: Cao đến Thấp
+                Collections.sort(filteredList, Comparator.comparingDouble(Product::getBasePrice).reversed());
+            } else {
+                // Mặc định (R.id.sort_default) -> Sắp xếp Theo tên A-Z
+                Collections.sort(filteredList, Comparator.comparing(Product::getName));
+            }
+
+            return filteredList;
+        }
+
+        @Override
+        protected void onPostExecute(List<Product> filteredList) {
+            super.onPostExecute(filteredList);
+            if (filteredList != null && productAdapter != null && !isCancelled()) {
+                productAdapter.updateProducts(filteredList);
+            }
+        }
+    }
+    // ⭐⭐⭐ KẾT THÚC SỬA ⭐⭐⭐
+
 
     private void updateCartBadge(List<CartItem> cartItems) {
         if (cartItems == null) return;
@@ -248,13 +350,11 @@ public class HomeActivity extends AppCompatActivity {
         bottomNavigation.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
-                return true; // Already here
-            }
-            else if (itemId == R.id.nav_map) { // ⭐ THÊM ELSE IF NÀY ⭐
-                    Intent intent = new Intent(HomeActivity.this, MapActivity.class);
-                    startActivity(intent);
-                    return true; // Return true để đánh dấu item đã được xử lý
-
+                return true;
+            } else if (itemId == R.id.nav_map) {
+                Intent intent = new Intent(HomeActivity.this, MapActivity.class);
+                startActivity(intent);
+                return true;
             } else if (itemId == R.id.nav_profile) {
                 Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
                 startActivity(intent);
@@ -264,7 +364,77 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             }
+            else if (itemId == R.id.nav_chat) {
+                Intent intent = new Intent(HomeActivity.this, ChatActivity.class);
+                startActivity(intent);
+                return true;
+            }
             return false;
         });
+    }
+
+    @Override
+    public void onFilterApplied(String category, int priceRangeId) {
+        this.currentCategoryFilter = category;
+        this.currentPriceRangeId = priceRangeId;
+        filterAndSortProducts();
+    }
+
+    @Override
+    public void onSortApplied(int sortId, String title) {
+        this.currentSortOptionId = sortId;
+        // Cập nhật text hiển thị trên màn hình
+        textSortBy.setText("Sắp xếp theo: " + title);
+        filterAndSortProducts();
+    }
+
+
+    // (Hai hàm "nghe" Chat Badge giữ nguyên)
+    private void setupChatBadgeListener() {
+        if (chatListenerRegistration != null) {
+            chatListenerRegistration.remove();
+        }
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            updateChatBadgeUI(0);
+            return;
+        }
+        String currentUserId = currentUser.getUid();
+        com.google.firebase.firestore.Query chatQuery = db.collection("Chats")
+                .whereArrayContains("participants", currentUserId);
+        chatListenerRegistration = chatQuery.addSnapshotListener((snapshots, error) -> {
+            if (error != null) {
+                Log.w("HomeActivityChat", "Listen failed.", error);
+                updateChatBadgeUI(0);
+                return;
+            }
+            if (snapshots == null || snapshots.isEmpty()) {
+                updateChatBadgeUI(0);
+                return;
+            }
+            long totalUnread = 0;
+            for (com.google.firebase.firestore.DocumentSnapshot doc : snapshots.getDocuments()) {
+                List<String> participants = (List<String>) doc.get("participants");
+                if (participants != null && participants.contains(SHOP_UID)) {
+                    Long userUnreadCount = doc.getLong("userUnreadCount");
+                    if (userUnreadCount != null) {
+                        totalUnread = userUnreadCount;
+                    }
+                    break;
+                }
+            }
+            updateChatBadgeUI((int) totalUnread);
+        });
+    }
+
+    private void updateChatBadgeUI(int count) {
+        if (bottomNavigation == null) return;
+        BadgeDrawable badge = bottomNavigation.getOrCreateBadge(R.id.nav_chat);
+        if (count > 0) {
+            badge.setNumber(count);
+            badge.setVisible(true);
+        } else {
+            badge.setVisible(false);
+        }
     }
 }

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".ui.cart.MapAddressSelectionActivity">
+
+    <org.osmdroid.views.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/searchCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/searchAddressInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:hint="Nhập địa chỉ của bạn..."
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLines="1"
+                android:padding="16dp"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/searchAddressButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="12dp"
+                android:src="@drawable/ic_search_outlined"
+                app:tint="@color/coral" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+    <ImageView
+        android:id="@+id/centerMarker"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="40dp"
+        android:src="@drawable/ic_map_pin_red" />
+
+    <TextView
+        android:id="@+id/selectedAddressText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/confirmAddressButton"
+        android:background="#E6FFFFFF"
+        android:padding="12dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="8dp"
+        android:maxLines="3"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:textColor="@color/dark_navy"
+        android:text="Di chuyển bản đồ để chọn vị trí..." />
+
+    <Button
+        android:id="@+id/confirmAddressButton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:text="Xác nhận địa chỉ này"
+        android:backgroundTint="@color/coral"
+        app:cornerRadius="12dp"/>
+
+</RelativeLayout>

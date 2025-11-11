@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="18dp"
+    app:cardCornerRadius="12dp"
     app:cardElevation="2dp"
     app:cardBackgroundColor="@color/white">
 
@@ -13,20 +14,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <RelativeLayout
+        <ImageView
+            android:id="@+id/productImage"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:background="@color/product_bg">
-
-            <ImageView
-                android:id="@+id/productImage"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@color/gray_icon"  />
-
-
-        </RelativeLayout>
+            android:scaleType="centerCrop"
+            android:src="@color/gray_icon" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,22 +31,22 @@
                 android:id="@+id/productName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Product Name"
                 android:textColor="@color/dark_navy"
-                android:textSize="17sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                android:fontFamily="@font/quicksand_font" />
+                android:maxLines="1"
+                android:ellipsize="end"
+                tools:text="Áo Thun Cổ Tròn" />
 
             <TextView
                 android:id="@+id/productPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="$0.00"
                 android:textColor="@color/dark_navy"
-                android:textSize="18sp"
+                android:textSize="17sp"
                 android:textStyle="bold"
-                android:fontFamily="@font/quicksand_font" />
+                tools:text="250.000 ₫" />
         </LinearLayout>
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

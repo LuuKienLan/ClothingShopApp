@@ -11,9 +11,9 @@
         android:title="Map" />
 
     <item
-        android:id="@+id/nav_notifications"
-        android:icon="@drawable/ic_bell_outline"
-        android:title="Notifications"/> // Thêm title nếu cần
+        android:id="@+id/nav_chat"
+        android:icon="@drawable/ic_chat_outline"
+        android:title="Chat"/>
 
     <item
         android:id="@+id/nav_orders"

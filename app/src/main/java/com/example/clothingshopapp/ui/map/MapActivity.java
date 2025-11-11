@@ -1,6 +1,7 @@
 package com.example.clothingshopapp.ui.map;
 
 import android.Manifest;
+import android.annotation.SuppressLint; // ⭐ IMPORT MỚI
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,6 +22,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.clothingshopapp.R;
 import com.example.clothingshopapp.ui.adapter.StoreListAdapter;
+
+// ⭐ IMPORT CÁC THƯ VIỆN GPS "XỊN"
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
+import com.google.android.gms.tasks.CancellationTokenSource;
+
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.osmdroid.api.IMapController;
@@ -56,7 +64,10 @@ public class MapActivity extends AppCompatActivity implements StoreListAdapter.O
     private Polyline currentRoadOverlay;
     private RoadManager roadManager;
 
-    // --- Inner class StoreLocation ---
+    // ⭐ THÊM BIẾN "SÚNG BẮN" GPS
+    private FusedLocationProviderClient fusedLocationClient;
+
+    // (Inner class StoreLocation... giữ nguyên)
     public static class StoreLocation {
         public String id; public String name; public String address; public String hours; public String phone;
         public double latitude; public double longitude;
@@ -66,8 +77,6 @@ public class MapActivity extends AppCompatActivity implements StoreListAdapter.O
         }
         public GeoPoint getGeoPoint() { return new GeoPoint(latitude, longitude); }
     }
-
-    // --- Lớp kế thừa StoreOverlayItem ---
     public static class StoreOverlayItem extends OverlayItem {
         private final StoreLocation storeLocation;
         public StoreOverlayItem(String aTitle, String aSnippet, GeoPoint aGeoPoint, StoreLocation store) {
@@ -77,7 +86,7 @@ public class MapActivity extends AppCompatActivity implements StoreListAdapter.O
         public StoreLocation getStoreLocation() { return storeLocation; }
     }
 
-    // --- Thông tin cửa hàng (Hardcoded) ---
+    // (Thông tin cửa hàng... giữ nguyên)
     private static final String FPTU_ID = "FPTU";
     private static final String FPTU_NAME = "Clothing Shop - Chi nhánh FPTU";
     private static final String FPTU_ADDRESS = "Lô E2a-7, Đường D1, Long Thạnh Mỹ, Quận 9, TP.HCM";
@@ -93,7 +102,7 @@ public class MapActivity extends AppCompatActivity implements StoreListAdapter.O
     private static final double Q1_LATITUDE = 10.7758;
     private static final double Q1_LONGITUDE = 106.7019;
 
-    // --- Permission Launcher ---
+    // (Permission Launcher giữ nguyên)
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
@@ -115,6 +124,10 @@ public class MapActivity extends AppCompatActivity implements StoreListAdapter.O
 
         initViews();
         roadManager = new OSRMRoadManager(this, getPackageName());
+
+        // ⭐ NẠP "ĐẠN" CHO "SÚNG" GPS
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
         createStoreList();
         setupMap();
         addStoreMarkers();
@@ -122,7 +135,7 @@ public class MapActivity extends AppCompatActivity implements StoreListAdapter.O
         requestLocationPermission();
 
         toolbar.setNavigationOnClickListener(v -> finish());
-        fabMyLocation.setOnClickListener(v -> goToMyLocation());
+        fabMyLocation.setOnClickListener(v -> goToMyLocation()); // ⭐ Nút này sẽ gọi hàm "xịn"
     }
 
     private void initViews() {
@@ -131,6 +144,8 @@ public class MapActivity extends AppCompatActivity implements StoreListAdapter.O
         fabMyLocation = findViewById(R.id.fabMyLocation);
         storeListRecyclerView = findViewById(R.id.storeListRecyclerView);
     }
+
+    // (Các hàm từ createStoreList đến setupStoreListRecyclerView giữ nguyên)
 
     private void createStoreList() {
         storeList.clear();
@@ -157,16 +172,13 @@ public class MapActivity extends AppCompatActivity implements StoreListAdapter.O
 
     private void addStoreMarkers() {
         if (mapView == null || storeList.isEmpty()) return;
-
         ArrayList<StoreOverlayItem> items = new ArrayList<>();
         Drawable markerIcon = ContextCompat.getDrawable(this, R.drawable.ic_map_pin_red);
-
         for (StoreLocation store : storeList) {
             StoreOverlayItem item = new StoreOverlayItem(store.name, store.address, store.getGeoPoint(), store);
             item.setMarker(markerIcon);
             items.add(item);
         }
-
         markerOverlay = new ItemizedIconOverlay<>(items,
                 new ItemizedIconOverlay.OnItemGestureListener<StoreOverlayItem>() {
                     @Override
@@ -183,7 +195,6 @@ public class MapActivity extends AppCompatActivity implements StoreListAdapter.O
                         return false;
                     }
                 }, getApplicationContext());
-
         mapView.getOverlays().clear();
         mapView.getOverlays().add(markerOverlay);
         mapView.invalidate();
@@ -225,16 +236,17 @@ public class MapActivity extends AppCompatActivity implements StoreListAdapter.O
         if (myLocationOverlay != null) {
             mapView.getOverlays().remove(myLocationOverlay);
         }
-
         myLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this), mapView);
         myLocationOverlay.enableMyLocation();
-
         myLocationOverlay.runOnFirstFix(() -> {
             Log.d(TAG, "First location fix received.");
             runOnUiThread(() -> {
+                // Chúng ta vẫn dùng VỊ TRÍ CŨ (CACHE) để hiện cái chấm xanh
+                // (Vì hàm này chỉ chạy 1 lần)
+                // Nhưng chúng ta sẽ update nó bằng nút FAB
                 currentLocation = myLocationOverlay.getMyLocation();
                 if (currentLocation != null && mapView != null) {
-                    Log.d(TAG, "Current location: " + currentLocation.getLatitude() + ", " + currentLocation.getLongitude());
+                    Log.d(TAG, "Current location (cached): " + currentLocation.getLatitude() + ", " + currentLocation.getLongitude());
                     if (zoomToFirstFix) {
                         IMapController mapController = mapView.getController();
                         mapController.setZoom(17.0);
@@ -246,55 +258,77 @@ public class MapActivity extends AppCompatActivity implements StoreListAdapter.O
                 }
             });
         });
-
         mapView.getOverlays().add(myLocationOverlay);
         mapView.invalidate();
     }
 
+    // ⭐⭐⭐ BẮT ĐẦU SỬA (HÀM "XỊN") ⭐⭐⭐
+    /**
+     * Hàm này đã được viết lại để dùng getCurrentLocation
+     * (Giống hệt CheckoutActivity)
+     */
+    @SuppressLint("MissingPermission")
     private void goToMyLocation() {
-        if (currentLocation != null && mapView != null) {
-            mapView.getController().animateTo(currentLocation);
-            mapView.getController().setZoom(17.5);
-        } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && myLocationOverlay != null) {
-            Toast.makeText(this, "Đang tìm vị trí của bạn...", Toast.LENGTH_SHORT).show();
-            myLocationOverlay.enableMyLocation();
-            android.location.Location lastKnown = myLocationOverlay.getMyLocationProvider().getLastKnownLocation();
-            if(lastKnown != null){
-                GeoPoint lastKnownGeoPoint = new GeoPoint(lastKnown.getLatitude(), lastKnown.getLongitude());
-                mapView.getController().animateTo(lastKnownGeoPoint);
-                mapView.getController().setZoom(17.5);
-            }
-        } else {
+        // 1. Kiểm tra quyền
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "Vui lòng cấp quyền vị trí", Toast.LENGTH_SHORT).show();
-            requestLocationPermission();
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+            return;
         }
-    }
 
-    // ⭐ HÀM (PUBLIC) ĐƯỢC GỌI TỪ BOTTOMSHEET ⭐
+        // 2. Bắt đầu "bắn" GPS
+        Toast.makeText(this, "Đang lấy vị trí hiện tại ...", Toast.LENGTH_SHORT).show();
+        fabMyLocation.setEnabled(false); // Khóa nút
+
+        CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancellationTokenSource.getToken())
+                .addOnSuccessListener(this, location -> {
+                    fabMyLocation.setEnabled(true); // Mở nút
+                    if (location != null && mapView != null) {
+                        // 3. "Bắn" trúng -> Lấy tọa độ MỚI
+                        GeoPoint newCurrentLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
+                        this.currentLocation = newCurrentLocation; // Cập nhật vị trí "xịn"
+
+                        Log.d(TAG, "goToMyLocation thành công: " + newCurrentLocation.toDoubleString());
+
+                        // 4. Zoom
+                        mapView.getController().animateTo(newCurrentLocation);
+                        mapView.getController().setZoom(17.5);
+                    } else {
+                        // "Bắn" xịt (null)
+                        Toast.makeText(this, "Không tìm thấy vị trí. Vui lòng bật GPS!", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(this, e -> {
+                    // "Súng" hỏng
+                    fabMyLocation.setEnabled(true);
+                    Log.e(TAG, "goToMyLocation (Hàm 'xịn') thất bại", e);
+                    Toast.makeText(this, "Lỗi khi lấy vị trí GPS.", Toast.LENGTH_SHORT).show();
+                });
+    }
+    // ⭐⭐⭐ KẾT THÚC SỬA ⭐⭐⭐
+
+    // (Các hàm còn lại: drawRoute, UpdateRoadTask, Lifecycle... giữ nguyên)
+
     public void drawRoute(GeoPoint start, GeoPoint end) {
         if (mapView == null) return;
-        // Xóa đường đi cũ (nếu có)
         if (currentRoadOverlay != null) {
             mapView.getOverlays().remove(currentRoadOverlay);
         }
-
         new UpdateRoadTask().execute(start, end);
     }
 
-    // ⭐ LỚP ASYNCTASK ĐỂ TÌM ĐƯỜNG ĐI ⭐
     private class UpdateRoadTask extends AsyncTask<GeoPoint, Void, Road> {
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             Toast.makeText(MapActivity.this, "Đang tìm đường đi...", Toast.LENGTH_SHORT).show();
         }
-
         @Override
         protected Road doInBackground(GeoPoint... params) {
             ArrayList<GeoPoint> waypoints = new ArrayList<>();
-            waypoints.add(params[0]); // Điểm bắt đầu
-            waypoints.add(params[1]); // Điểm kết thúc
+            waypoints.add(params[0]);
+            waypoints.add(params[1]);
             try {
                 return roadManager.getRoad(waypoints);
             } catch (Exception e) {
@@ -302,7 +336,6 @@ public class MapActivity extends AppCompatActivity implements StoreListAdapter.O
                 return null;
             }
         }
-
         @Override
         protected void onPostExecute(Road road) {
             super.onPostExecute(road);
@@ -310,26 +343,19 @@ public class MapActivity extends AppCompatActivity implements StoreListAdapter.O
                 Toast.makeText(MapActivity.this, "Lỗi: Không thể tìm thấy đường đi", Toast.LENGTH_SHORT).show();
                 return;
             }
-
             if (road.mStatus != Road.STATUS_OK) {
                 Toast.makeText(MapActivity.this, "Lỗi: " + road.mStatus, Toast.LENGTH_SHORT).show();
                 return;
             }
-
             currentRoadOverlay = RoadManager.buildRoadOverlay(road);
             currentRoadOverlay.setColor(Color.BLUE);
             currentRoadOverlay.setWidth(10);
             mapView.getOverlays().add(currentRoadOverlay);
-
-            // ⭐ BẮT ĐẦU SỬA Ở ĐÂY: ZOOM ĐỂ THẤY CẢ ĐƯỜNG ĐI ⭐
             if (road.mBoundingBox != null) {
                 mapView.post(() -> {
-                    // 100 là padding (px) xung quanh đường đi
                     mapView.zoomToBoundingBox(road.mBoundingBox, true, 100);
                 });
             }
-            // ⭐ KẾT THÚC SỬA ⭐
-
             mapView.invalidate();
             Toast.makeText(MapActivity.this, "Đã tìm thấy đường đi!", Toast.LENGTH_SHORT).show();
         }
@@ -344,7 +370,6 @@ public class MapActivity extends AppCompatActivity implements StoreListAdapter.O
             myLocationOverlay.enableMyLocation();
         }
     }
-
     @Override
     public void onPause(){
         super.onPause();
@@ -353,7 +378,6 @@ public class MapActivity extends AppCompatActivity implements StoreListAdapter.O
             myLocationOverlay.disableMyLocation();
         }
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
