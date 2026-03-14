@@ -1,60 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="#F8F8F8"
+    android:fitsSystemWindows="true"
+    tools:context=".ui.auth.ProfileActivity">
 
-    <!-- Header -->
-    <RelativeLayout
-        android:id="@+id/header"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp">
+        android:background="@color/white"
+        app:elevation="2dp">
 
-        <ImageView
-            android:id="@+id/backButton"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentStart="true"
-            android:src="@drawable/ic_arrow_back"
-            app:tint="@color/dark_navy" />
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIconTint="@color/dark_navy"
+            app:title="My Profile"
+            app:titleTextColor="@color/dark_navy" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Profile"
-            android:textColor="@color/dark_navy"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:fontFamily="sans-serif-medium" />
-    </RelativeLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Content -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/header"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/appBarLayout"
+        android:orientation="vertical"
+        android:padding="20dp">
 
-        <ImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:src="@drawable/ic_person_outline"
-            android:alpha="0.3"
-            app:tint="@color/gray_icon" />
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profileImageView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/ic_default_profile" />
 
         <TextView
+            android:id="@+id/nameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
-            android:text="Profile page"
+            android:fontFamily="@font/sen_font"
+            android:textColor="@color/dark_navy"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            tools:text="User Name" />
+
+        <TextView
+            android:id="@+id/emailTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/sen_font"
             android:textColor="@color/gray_text"
             android:textSize="16sp"
-            android:fontFamily="sans-serif" />
+            tools:text="user.email@example.com" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="30dp"
+            android:background="#E0E0E0" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/editProfileButton"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/sen_font"
+            android:text="Edit Profile"
+            android:textColor="@color/dark_navy"
+            android:textSize="16sp"
+            app:cornerRadius="12dp"
+            app:strokeColor="#CCCCCC" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/changePasswordButton"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/sen_font"
+            android:text="Change Password"
+            android:textColor="@color/dark_navy"
+            android:textSize="16sp"
+            app:cornerRadius="12dp"
+            app:strokeColor="#CCCCCC" />
     </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/logoutButton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
+        android:fontFamily="@font/sen_font"
+        android:text="Log Out"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:backgroundTint="@color/coral"
+        app:cornerRadius="12dp" />
 
 </RelativeLayout>

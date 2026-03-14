@@ -2,19 +2,26 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28"/>
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
     <application
+        android:name=".ui.MainApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-
-        android:label="ClothingShopApp"
-
         android:supportsRtl="true"
-        android:theme="@style/Theme.ClothingShopApp">
+        android:theme="@style/Theme.ClothingShopApp"
+        tools:targetApi="31">
 
-        <!-- Login Activity (LAUNCHER) -->
         <activity
             android:name=".ui.auth.LoginActivity"
             android:exported="true">
@@ -24,29 +31,81 @@
             </intent-filter>
         </activity>
 
-        <!-- Register Activity -->
         <activity
             android:name=".ui.auth.RegisterActivity"
             android:exported="false" />
-
-        <!-- Home Activity (Product List) -->
         <activity
-            android:name=".ui.product.ProductViewModel"
+            android:name=".ui.product.HomeActivity"
             android:exported="false" />
 
-        <!-- My Orders Activity -->
+        <activity
+            android:name=".ui.product.ProductDetailActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.auth.ProfileActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.auth.EditProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.auth.ChangePasswordActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.cart.CartActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.cart.OrderConfirmationActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.cart.CheckoutActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.cart.AddAddressActivity"
+            android:exported="false" />
+
         <activity
             android:name=".ui.orders.MyOrdersActivity"
             android:exported="false" />
-        <!-- Product Detail Activity -->
-<!--        <activity-->
-<!--            android:name=".ui.product.ProductDetailActivity"-->
-<!--            android:exported="false" />-->
 
-        <!-- Cart Activity -->
-<!--        <activity-->
-<!--            android:name=".ui.cart.CartActivity"-->
-<!--            android:exported="false" />-->
+        <activity
+            android:name=".ui.map.MapActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.cart.PaymentResultActivity"
+            android:exported="true"
+            android:launchMode="singleTop"> <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="myapp" android:host="payment-result" />
+        </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.cart.MapAddressSelectionActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.orders.TrackOrderActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.orders.OrderDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.chat.ChatActivity"
+            android:exported="false" />
+
+
+        <activity
+            android:name=".ui.auth.ShopAdminActivity"
+            android:exported="false" />
 
     </application>
 

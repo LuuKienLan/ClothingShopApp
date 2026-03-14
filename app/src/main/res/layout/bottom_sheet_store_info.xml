@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bottom_sheet_background"
+    android:padding="16dp">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:background="@color/grey_200"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/storeName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Clothing Shop - Chi nhánh FPTU"
+        android:textColor="@color/dark_navy"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/storeRating"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="4.5 ⭐ (100+ đánh giá)"
+        android:textSize="14sp"
+        android:textColor="@color/grey_500"
+        android:layout_marginBottom="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_location_on"
+            app:tint="@color/coral"
+            android:layout_marginEnd="8dp"/>
+        <TextView
+            android:id="@+id/storeAddress"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Lô E2a-7, Đường D1, Long Thạnh Mỹ, Quận 9, Thành phố Hồ Chí Minh"
+            android:textColor="@color/dark_navy"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_access_time"
+            app:tint="@color/coral"
+            android:layout_marginEnd="8dp"/>
+        <TextView
+            android:id="@+id/storeHours"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Giờ mở cửa: 8:00 - 21:00 hàng ngày"
+            android:textColor="@color/dark_navy"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_phone"
+            app:tint="@color/coral"
+            android:layout_marginEnd="8dp"/>
+        <TextView
+            android:id="@+id/storePhone"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="+84 987 654 321"
+            android:textColor="@color/dark_navy"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnGetDirections"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Chỉ đường"
+        android:backgroundTint="@color/coral"
+        android:textColor="@color/white"
+        app:cornerRadius="8dp"
+        android:layout_marginBottom="8dp"/>
+
+    <Button
+        android:id="@+id/btnCallStore"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Gọi điện"
+        android:backgroundTint="@color/dark_navy"
+        android:textColor="@color/white"
+        app:cornerRadius="8dp"/>
+
+</LinearLayout>

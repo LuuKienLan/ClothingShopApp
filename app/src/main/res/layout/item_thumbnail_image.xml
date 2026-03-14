@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="60dp"
+    android:layout_height="60dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp">
+
+    <ImageView
+        android:id="@+id/thumbnail_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:background="@drawable/size_selector_default"
+        android:padding="1dp"
+        android:contentDescription="Thumbnail" />
+
+    <View
+        android:id="@+id/thumbnail_border"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/thumbnail_border_shape"
+        android:visibility="gone"
+        tools:visibility="visible"
+        xmlns:tools="http://schemas.android.com/tools" />
+
+</FrameLayout>
